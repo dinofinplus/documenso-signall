@@ -1,0 +1,40 @@
+--- a/apps/remix/app/components/general/envelope-signing/envelope-signer-page-renderer.tsx
++++ b/apps/remix/app/components/general/envelope-signing/envelope-signer-page-renderer.tsx
+@@ -78,12 +78,14 @@
+   const fullName = useRef(fullNameState);
+   const email = useRef(emailState);
+   const signature = useRef(signatureState);
++  const fieldsRemaining = useRef(recipientFieldsRemaining);
+ 
+   useEffect(() => {
+     fullName.current = fullNameState;
+     email.current = emailState;
+     signature.current = signatureState;
+-  }, [fullNameState, emailState, signatureState]);
++    fieldsRemaining.current = recipientFieldsRemaining;
++  }, [fullNameState, emailState, signatureState, recipientFieldsRemaining]);
+ 
+   const cachedRenderFields = useRef<Map<number, Field & { signature?: Signature | null }>>(new Map());
+   const prevShowPendingFieldTooltip = useRef(showPendingFieldTooltip);
+@@ -398,7 +400,21 @@
+                 await executeActionAuthProcedure({
+                   onReauthFormSubmit: async (authOptions) => {
+                     await signField(field.id, payload, authOptions);
++
++                    // SIGN-ALL PATCH: fill every other unsigned signature field with the same signature.
++                    // Sequential; on first failure stop (customer can still click the rest by hand).
++                    try {
++                      const others = fieldsRemaining.current.filter(
++                        (f) => f.type === FieldType.SIGNATURE && f.id !== field.id && !f.inserted,
++                      );
+ 
++                      for (const other of others) {
++                        await signField(other.id, payload, authOptions);
++                      }
++                    } catch (err) {
++                      console.error(err);
++                    }
++
+                     loadingSpinnerGroup.destroy();
+                   },
+                   actionTarget: field.type,
