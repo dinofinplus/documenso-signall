@@ -1,0 +1,13 @@
+diff --git a/packages/email/template-components/template-custom-message-body.tsx b/packages/email/template-components/template-custom-message-body.tsx
+index adcf4dc..4281a46 100644
+--- a/packages/email/template-components/template-custom-message-body.tsx
++++ b/packages/email/template-components/template-custom-message-body.tsx
+@@ -22,7 +22,7 @@ export const TemplateCustomMessageBody = ({ text }: TemplateCustomMessageBodyPro
+       {paragraph.split('\n').map((line, j) => (
+         <React.Fragment key={`line-${i}-${j}`}>
+           {j > 0 && <br />}
+-          {line}
++          {line.split(/\*\*(.+?)\*\*/g).map((part, k) => (k % 2 ? <strong key={k}>{part}</strong> : part))}
+         </React.Fragment>
+       ))}
+     </p>

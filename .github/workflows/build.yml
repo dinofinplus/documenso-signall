@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
 env:
   DOCUMENSO_VERSION: v2.21.1
-  TAG: v2.21.1-signall.1
+  TAG: v2.21.1-signall.2
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,7 +15,7 @@ jobs:
       - name: Fetch Documenso source
         run: git clone --depth 1 --branch "$DOCUMENSO_VERSION" https://github.com/documenso/documenso.git src
       - name: Apply patch (fails if it does not fit)
-        run: cd src && git apply --check ../sign-all.patch && git apply ../sign-all.patch
+        run: cd src && for p in sign-all bold-message; do git apply --check ../$p.patch && git apply ../$p.patch; done
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@v3
         with:

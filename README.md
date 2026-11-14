@@ -1,6 +1,6 @@
 # documenso-signall
 
-Documenso v2.21.1 + one patch: after the first signature, all other SIGNATURE fields
+Documenso v2.21.1 + patches (`bold-message.patch`: **bold** in the custom email message). Patch 1: after the first signature, all other SIGNATURE fields
 of the same signer fill automatically (each via the normal sign call, so audit log is intact).
 Licence: AGPL-3.0 (same as Documenso); patch and recipe are public for that reason.
 
